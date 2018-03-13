@@ -13,6 +13,19 @@ const appState = {
 // 就是 redux 中的 reducer
 // 需要是一个纯函数 唯一能(需要)的就是根据 action，以及原有的 state 生成一个新的 state 并返回
 function reducer (state, action) {
+  if (!state) {
+    return {
+      title: {
+        text: 'title1',
+        color: 'red'
+      },
+      content: {
+        text: 'text2',
+        color: 'blue'
+      }
+    }
+  }
+
   switch (action.type) {
     case 'update_title':
       return {
