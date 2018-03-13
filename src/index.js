@@ -10,7 +10,9 @@ const appState = {
 }
 
 // 这里创建一个新的对象 代替在原有对象上的修改 以方便检测状态的修改
-function stateChanger (state, action) {
+// 就是 redux 中的 reducer
+// 需要是一个纯函数 唯一能(需要)的就是根据 action，以及原有的 state 生成一个新的 state 并返回
+function reducer (state, action) {
   switch (action.type) {
     case 'update_title':
       return {
@@ -66,7 +68,8 @@ function renderContent (content, oldContent = '') {
 }
 
 // 添加一个方法用来生成 store 对象
-function createStore (state, stateChanger) {
+function createStore (reducer) {
+  let state = null
   const listeners = []
   const subscribe = function (listener) {
     listeners.push(listener)
@@ -75,11 +78,12 @@ function createStore (state, stateChanger) {
     return state
   }
   const dispatch = function (action) {
-    state = stateChanger(state, action)
+    state = reducer(state, action)
     listeners.forEach((l) => {
       l()
     })
   }
+  dispatch({})
   return {
     getState,
     dispatch,
@@ -87,7 +91,7 @@ function createStore (state, stateChanger) {
   }
 }
 
-let store = createStore(appState, stateChanger)
+let store = createStore(reducer)
 let oldState = store.getState()
 store.subscribe(() => {
   const newState = store.getState()
