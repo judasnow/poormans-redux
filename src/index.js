@@ -9,36 +9,63 @@ const appState = {
   }
 }
 
-// 这里不再使用全局的 state
+// 这里创建一个新的对象 代替在原有对象上的修改 以方便检测状态的修改
 function stateChanger (state, action) {
   switch (action.type) {
     case 'update_title':
-      state.title.text = action.text
+      return {
+        ...state,
+        title: {
+          ...state.title,
+          text: action.text
+        }
+      }
       break;
     case 'update_content':
-      state.content.text = action.text
+      return {
+        ...state,
+        content: {
+          ...state.content,
+          // 会覆盖同名的属性
+          text: action.text
+        }
+      }
       break;
+    default:
+      return state
   }
 }
 
-function renderApp (appState) {
+function renderApp (appState, oldAppState = {}) {
+  if (appState === oldAppState) {
+    return
+  }
+  console.log('render all app')
   renderTitle(appState.title)
   renderContent(appState.content)
 }
 
-function renderTitle (title) {
+function renderTitle (title, oldTitle = '') {
+  if (title === oldTitle) {
+    return
+  }
+  console.log('render title')
   const titleDOM = document.getElementById('title')
   titleDOM.innerHTML = title.text
   titleDOM.style.color = title.color
 }
 
-function renderContent (content) {
+function renderContent (content, oldContent = '') {
+  if (content === oldContent) {
+    return
+  }
+  console.log('render content')
   const contentDOM = document.getElementById('content')
   contentDOM.innerHTML = content.text
   contentDOM.style.color = content.color
 }
 
-// 添加一个方法用来生成
+// 添加一个方法用来生成 store 对象
 function createStore (state, stateChanger) {
   const listeners = []
   const subscribe = function (listener) {
@@ -48,24 +75,27 @@ function createStore (state, stateChanger) {
     return state
   }
   const dispatch = function (action) {
-    stateChanger(state, action)
+    state = stateChanger(state, action)
     listeners.forEach((l) => {
       l()
     })
   }
   return {
-    getState: getState,
-    dispatch: dispatch,
-    subscribe: subscribe
+    getState,
+    dispatch,
+    subscribe
   }
 }
 
 let store = createStore(appState, stateChanger)
+let oldState = store.getState()
 store.subscribe(() => {
-  renderApp(store.getState())
+  const newState = store.getState()
+  renderApp(newState, store.getState())
+  oldState = newState
 })
 renderApp(store.getState())
 store.dispatch({
   type: 'update_text',
-  text: '1024'
+  text: '10241s'
 })
