@@ -1,5 +1,3 @@
-import App from "./App";
-
 const appState = {
   title: {
     text: 'title1',
@@ -17,7 +15,7 @@ const appState = {
 // 为了解决这个问题 定义一个方法 将所有对全局状态的修改
 // 都集中在同一个地方
 // 根据不同的 action 执行不同的操作
-function dispatch (action) {
+function stateChanger (action) {
   switch (action.type) {
     case 'update_title':
       appState.title.text = action.text
@@ -45,6 +43,19 @@ function renderContent (content) {
   contentDOM.style.color = content.color
 }
 
-renderApp(appState)
-dispatch({ type: 'update_title', text: '《React.js 小书》' })
-renderApp(appState)
+// 添加一个方法用来生成
+function createStore (state, stateChanger) {
+  const getState = function () {
+    return state
+  }
+  const dispatch = function () {
+    stateChanger()
+  }
+  return {
+    getState: getState,
+    dispatch: dispatch
+  }
+}
+
+let store = createStore(appState, stateChanger)
+renderApp(store.getState())
