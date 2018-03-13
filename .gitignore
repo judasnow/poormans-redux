@@ -19,3 +19,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.gitignore
+.idea/inspectionProfiles/
+.idea/misc.xml
+.idea/modules.xml
+.idea/poormans-redux.iml
+.idea/workspace.xml
+README.md
+package.json
+public/
+src/
+yarn.lock
