@@ -91,11 +91,11 @@ let store = createStore(appState, stateChanger)
 let oldState = store.getState()
 store.subscribe(() => {
   const newState = store.getState()
-  renderApp(newState, store.getState())
+  renderApp(newState, oldState)
   oldState = newState
 })
 renderApp(store.getState())
 store.dispatch({
-  type: 'update_text',
+  type: 'update_title',
   text: '10241s'
 })
